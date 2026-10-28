@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI 앞에서, 나는 어떤 선택을 할까?</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1ECFF; --card:#FFFFFF; --ink:#1B1B3A; --ol:#1B1B3A; --sh:#1B1B3A; --sub:#56567C;
+  --yellow:#FFD23F; --pink:#FF6FA5; --mint:#3DDBBE; --violet:#9B86FF; --onpop:#1B1B3A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#15152E; --card:#25254D; --ink:#F6F4FF; --ol:#F6F4FF; --sh:#05050F; --sub:#B4B4DA;}
+}
+:root[data-theme="dark"]{--bg:#15152E; --card:#25254D; --ink:#F6F4FF; --ol:#F6F4FF; --sh:#05050F; --sub:#B4B4DA;}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;line-height:1.6;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:16px 16px 44px}
+.jua,h1,h2,.q{font-family:"Jua","Noto Sans KR",sans-serif;font-weight:400}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:4px solid var(--violet);outline-offset:3px}
+.screen[hidden]{display:none}
+.flip{animation:flip .38s ease-out}
+@keyframes flip{from{opacity:0;transform:perspective(700px) rotateY(-80deg)}to{opacity:1;transform:none}}
+
+/* start */
+.hero{text-align:center;padding-top:18px}
+.hero h1{font-size:clamp(34px,10vw,46px);line-height:1.25;margin:6px 0 10px}
+.hl{background:var(--yellow);color:var(--onpop);padding:0 8px;border-radius:12px;border:3px solid var(--ol);display:inline-block;transform:rotate(-2deg)}
+.hero p{color:var(--sub);margin:0 auto;max-width:24em}
+.fan{display:flex;justify-content:center;margin:26px 0 30px}
+.fan .c{width:72px;height:104px;border:4px solid var(--ol);border-radius:16px;display:grid;place-items:center;font-size:34px;box-shadow:4px 4px 0 var(--sh);margin-left:-12px;color:var(--onpop)}
+.fan .c:nth-child(1){background:var(--mint);transform:rotate(-12deg);margin-left:0}
+.fan .c:nth-child(2){background:var(--pink);transform:rotate(-4deg) translateY(-6px)}
+.fan .c:nth-child(3){background:var(--violet);transform:rotate(4deg) translateY(-6px)}
+.fan .c:nth-child(4){background:var(--yellow);transform:rotate(12deg)}
+.btn{width:100%;border:4px solid var(--ol);border-radius:22px;background:var(--pink);color:var(--onpop);font-family:"Jua",sans-serif;font-size:23px;padding:13px 20px;box-shadow:5px 5px 0 var(--sh);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--sh)}
+.meta{color:var(--sub);font-size:13px;margin-top:16px;text-align:center}
+
+/* quiz */
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-family:"Jua",sans-serif;font-size:17px}
+.top span{background:var(--ol);color:var(--bg);border-radius:99px;padding:1px 12px;font-size:15px}
+.segs{display:flex;gap:4px;margin-bottom:18px}
+.segs i{flex:1;height:12px;border:2.5px solid var(--ol);border-radius:99px;background:var(--card)}
+.segs i.done{background:var(--mint)} .segs i.now{background:var(--yellow)}
+.sit{background:var(--card);border:4px solid var(--ol);border-radius:28px;box-shadow:7px 7px 0 var(--sh);padding:16px 18px 20px;margin:0 6px 22px 0}
+.sit-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.tab{font-family:"Jua",sans-serif;background:var(--ol);color:var(--bg);border-radius:10px;padding:1px 10px;font-size:14px;letter-spacing:.5px}
+.topic{font-weight:700;font-size:13px;background:var(--yellow);color:var(--onpop);border:3px solid var(--ol);border-radius:99px;padding:1px 12px}
+.q{font-size:21px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:12px;padding:0;margin:0 6px 0 0;list-style:none}
+.opt{width:100%;display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--card);border:3.5px solid var(--ol);border-radius:20px;box-shadow:4px 4px 0 var(--sh);padding:12px 14px;font-size:15.5px;font-weight:500;transition:transform .08s,box-shadow .08s,background .12s}
+.opt:active,.opt.picked{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--sh)}
+.opt.picked{background:var(--yellow);color:var(--onpop)}
+.chip{flex:none;width:30px;height:30px;border:3px solid var(--ol);border-radius:50%;display:grid;place-items:center;font-family:"Jua",sans-serif;font-size:16px;color:var(--onpop)}
+li:nth-child(1) .chip{background:var(--pink)} li:nth-child(2) .chip{background:var(--yellow)}
+li:nth-child(3) .chip{background:var(--mint)} li:nth-child(4) .chip{background:var(--violet)}
+.back{background:none;border:0;color:var(--sub);padding:16px 2px 0;font-size:14px}
+
+/* result */
+.tcard{border:4px solid var(--ol);border-radius:30px;background:var(--card);box-shadow:8px 8px 0 var(--sh);overflow:hidden;margin:0 8px 0 0}
+.t-top{display:flex;justify-content:space-between;align-items:center;padding:8px 18px;border-bottom:4px solid var(--ol);font-family:"Jua",sans-serif;font-size:16px;color:var(--onpop)}
+.art{height:160px;display:grid;place-items:center;font-size:92px;border-bottom:4px solid var(--ol);background-image:radial-gradient(rgba(27,27,58,.2) 2.5px,transparent 2.5px);background-size:16px 16px}
+.t-name{font-family:"Jua",sans-serif;font-size:34px;text-align:center;margin:12px 0 2px}
+.t-sub{text-align:center;color:var(--sub);font-size:13px;font-weight:700}
+.t-body{padding:6px 20px 18px}
+.t-body p{margin:10px 0}
+.stat{display:grid;grid-template-columns:132px 1fr 22px;gap:8px;align-items:center;font-size:13.5px;margin:6px 0}
+.stat span.t{height:14px;border:2.5px solid var(--ol);border-radius:99px;background:var(--bg);overflow:hidden}
+.stat span.t i{display:block;height:100%;border-right:2.5px solid var(--ol)}
+.stat span.t i[style*="width:0%"]{border-right:0}
+.h3{font-family:"Jua",sans-serif;font-size:15px;margin:14px 0 2px;display:block}
+.box{border:3.5px solid var(--ol);border-radius:22px;box-shadow:5px 5px 0 var(--sh);padding:14px 16px;margin:20px 8px 0 0;background:var(--card)}
+.box .lab{font-family:"Jua",sans-serif;font-size:17px;display:block;margin-bottom:4px}
+.box.q2{background:var(--yellow);color:var(--onpop)}
+.box.q2 .lab,.box.q2 span{color:var(--onpop)}
+.pair .rowp{display:flex;gap:12px;align-items:flex-start}
+.pair .em{flex:none;width:52px;height:52px;border:3.5px solid var(--ol);border-radius:16px;display:grid;place-items:center;font-size:28px;color:var(--onpop)}
+.pair .tg{display:inline-block;font-family:"Jua",sans-serif;font-size:14px;border:3px solid var(--ol);border-radius:99px;padding:0 12px;margin-bottom:4px;color:var(--onpop)}
+.pair.good .tg{background:var(--mint)} .pair.clash .tg{background:var(--pink)}
+.pair b.who{display:block;font-family:"Jua",sans-serif;font-weight:400;font-size:20px}
+.pair .how{display:block;margin-top:6px;font-weight:700}
+.note{font-size:13px;color:var(--sub);margin:20px 4px 0;text-align:center}
+.again{margin-top:16px;background:var(--mint)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<section id="start" class="screen">
+  <div class="hero flip">
+    <h1>AI 앞에서,<br><span class="hl">나의 선택</span>은?</h1>
+    <p>15장의 딜레마 카드를 넘기며 내 생각을 골라 보세요. 마지막에 나만의 캐릭터 카드를 받아요. 정답은 없어요!</p>
+    <div class="fan" aria-hidden="true"><div class="c">⚖️</div><div class="c">⚡</div><div class="c">🔍</div><div class="c">🛡️</div></div>
+    <button class="btn" id="startBtn">카드 뽑으러 가기</button>
+    <div class="meta">약 5분 · 15장 · 이름이나 답은 어디에도 저장되지 않아요</div>
+  </div>
+</section>
+
+<section id="quiz" class="screen" hidden>
+  <div class="top">딜레마 카드 <span id="count"></span></div>
+  <div class="segs" id="segs" role="progressbar" aria-valuemin="0" aria-valuemax="15"></div>
+  <div id="stage" aria-live="polite"></div>
+  <ul class="opts" id="opts"></ul>
+  <button class="back" id="backBtn">← 이전 카드</button>
+</section>
+
+<section id="result" class="screen" hidden></section>
+
+</main>
+
+<script>
+var TYPES = {
+  nav: {emoji:"⚖️", name:"균형 판단가", color:"#3DDBBE",
+    desc:"편리함과 책임을 함께 따져 보는 타입이에요. AI의 도움을 받되 결과를 확인하고, 내 선택이 다른 사람에게 미칠 영향도 생각해요.",
+    tip:"판단 기준을 말로 표현해 보세요. ‘왜 그렇게 결정했는지’를 설명할 수 있으면 더 단단한 기준이 돼요.",
+    ask:"모든 상황에서 ‘확인하고 판단하기’만으로 충분할까요? 확인할 시간이 없을 때는 어떻게 해야 할까요?"},
+  magic: {emoji:"⚡", name:"편리 우선형", color:"#FF6FA5",
+    desc:"빠르고 편한 것을 먼저 고르는 타입이에요. 그 순간에는 문제가 없어 보여도, 표절, 허위 정보, 개인정보 문제는 나중에 나와 다른 사람에게 돌아올 수 있어요.",
+    tip:"선택하기 전에 ‘이 일로 피해를 볼 사람이 있을까?’ 하고 한 번만 자문해 보세요.",
+    ask:"편리함이 커질수록 내가 져야 할 책임도 커질까요, 작아질까요? 그 이유는 무엇인가요?"},
+  explore: {emoji:"🔍", name:"호기심 탐험가", color:"#9B86FF",
+    desc:"AI가 어떻게 작동하는지, 어디까지 가능한지 직접 알아보고 싶어 하는 타입이에요. 호기심은 큰 힘이지만, 실험이 다른 사람에게 피해를 줄 수 있는지도 함께 살펴야 해요.",
+    tip:"새로운 시도를 하기 전에 ‘누구의 정보나 작품이 쓰이는지’, ‘동의를 받았는지’를 먼저 확인해 보세요.",
+    ask:"기술을 알아보는 것과 실제로 사용하는 것 사이에는 어떤 선이 있어야 할까요?"},
+  sprout: {emoji:"🛡️", name:"원칙 수호자", color:"#FFD23F",
+    desc:"분명한 원칙을 세우고 지키려는 타입이에요. 사람의 권리와 정직을 중요하게 생각해요. 다만 원칙만으로 풀기 어려운 복잡한 상황도 있다는 점을 함께 생각해 보면 좋아요.",
+    tip:"원칙끼리 부딪힐 때(예: 안전과 사생활)는 어떤 것을 먼저 지켜야 할지 이유와 함께 생각해 보세요.",
+    ask:"‘무조건 하지 않는다’는 원칙은 언제나 가장 좋은 해결책일까요? 예외가 필요한 경우는 없을까요?"}
+};
+var ORDER = ["nav","magic","explore","sprout"];
+var MATCH = {
+  nav:{
+    good:{k:"explore", why:"판단가는 탐험가의 실험에 점검 기준을 세워 주고, 탐험가는 판단가가 놓친 새로운 가능성을 보여 줘요.", how:"모둠 활동에서 탐험가가 먼저 시도하고, 판단가가 확인하는 역할로 나눠 보세요."},
+    clash:{k:"magic", why:"판단가의 ‘잠깐, 확인하자’가 편리 우선형에게는 시간 낭비나 잔소리로 들리기 쉬워요. 반대로 판단가는 빠른 결정이 불안해요.", how:"꼭 확인할 항목을 딱 3가지만 정해서 빠르게 점검하면 덜 부딪혀요."}},
+  magic:{
+    good:{k:"sprout", why:"원칙 수호자는 편리 우선형이 놓치기 쉬운 선을 짚어 주고, 편리 우선형은 현실적인 해결 방법을 알려 줄 수 있어요.", how:"‘이것만은 안 된다’ 한 가지를 함께 정하고, 나머지는 유연하게 가 보세요."},
+    clash:{k:"nav", why:"편리 우선형은 판단가의 신중함이 답답하고, 판단가는 편리 우선형의 속도가 걱정돼서 서로 의견이 갈리기 쉬워요.", how:"‘왜 확인이 필요한지’ 이유를 한 문장으로 말하고, 결정 시간은 미리 정해 보세요."}},
+  explore:{
+    good:{k:"nav", why:"판단가가 탐험가의 실험에 안전 기준을 세워 주고, 탐험가는 판단가가 보지 못한 방법을 찾아 줘요.", how:"실험하기 전에 ‘누구에게 영향이 가는지’를 판단가와 함께 점검해 보세요."},
+    clash:{k:"sprout", why:"탐험가는 ‘해 봐야 안다’, 원칙 수호자는 ‘해서는 안 된다’고 생각해서 정면으로 부딪히기 쉬워요.", how:"실험은 허락받은 범위에서만 하기로 약속하고, 규칙의 이유를 함께 이야기해 보세요."}},
+  sprout:{
+    good:{k:"magic", why:"편리 우선형의 현실적인 시각이 원칙 수호자의 경직된 생각을 풀어 주고, 원칙 수호자는 편리 우선형이 놓친 책임을 짚어 줘요.", how:"원칙 중에 정말 지켜야 할 것과 유연하게 바꿀 수 있는 것을 나눠 보세요."},
+    clash:{k:"explore", why:"원칙 수호자는 탐험가의 시도가 위험해 보이고, 탐험가는 금지부터 하는 태도가 답답하게 느껴져요.", how:"금지하기 전에 안전하게 해 볼 방법이 있는지 먼저 물어보세요."}}
+};
+var QS = [
+ {q:"내일 발표인데, AI가 알려 준 통계 수치의 출처를 물으니 “찾을 수 없다”고 답해요. 이 수치를 넣으면 발표가 훨씬 설득력 있어 보여요.", o:[
+  ["nav","출처를 직접 찾아보고, 확인되지 않으면 그 수치는 빼요"],
+  ["magic","설득력이 중요하니 그대로 넣어요"],
+  ["explore","다른 AI와 검색으로 같은 수치가 나오는지 비교해 보고 결정해요"],
+  ["sprout","근거가 없는 정보는 어떤 경우에도 발표에 쓰지 않아요"]]},
+ {q:"가장 친한 친구가 “AI로 쓴 글인데 들키면 안 되니까, 내 글처럼 고쳐 줘”라고 부탁해요.", o:[
+  ["nav","고쳐 주지는 않지만, 스스로 쓸 수 있게 같이 방법을 찾아 줘요"],
+  ["magic","친구 사이니까 도와줘요"],
+  ["explore","AI 탐지 프로그램이 어떻게 잡아내는지 궁금해서 같이 테스트해 봐요"],
+  ["sprout","정직하지 않은 일이라고 거절하고, 그대로 내지 말라고 말해요"]]},
+ {q:"학교에서 ‘AI 사용 금지’와 ‘AI 사용 허용’ 의견이 팽팽히 갈려요. 나는 어떻게 생각할까요?", o:[
+  ["nav","사용 범위와 표시 규칙을 정해서 조건부로 허용해야 해요"],
+  ["magic","어차피 다 쓰는데 금지하는 건 의미가 없으니 허용해야 해요"],
+  ["explore","허용하고, AI를 직접 써 보며 배우는 수업도 만들어야 해요"],
+  ["sprout","평가에 영향을 주는 활동에서는 공정을 위해 금지해야 해요"]]},
+ {q:"학교의 AI 감시 카메라가 쉬는 시간 폭력 장면을 자동으로 찾아내지만, 모든 학생의 얼굴과 행동이 계속 기록돼요.", o:[
+  ["nav","학생 의견을 듣고, 기록 보관 기간과 접근 권한을 엄격하게 제한하는 조건으로 찬성해요"],
+  ["magic","폭력이 줄어든다면 기록되는 건 괜찮아요"],
+  ["explore","정확도가 얼마나 되는지, 오류는 없는지 먼저 시험해 보자고 해요"],
+  ["sprout","모든 학생을 감시하는 건 옳지 않으니 반대해요"]]},
+ {q:"SNS에서 유명인이 충격적인 말을 하는 영상을 봤어요. 진짜 같고, 이미 수만 명이 공유했어요.", o:[
+  ["nav","공식 출처를 확인하기 전에는 공유하지 않고, 확인되면 근거와 함께 알려요"],
+  ["magic","흥미로우니 일단 공유하고, 틀렸다면 나중에 정정해요"],
+  ["explore","합성 판별 도구로 직접 분석해 보고 결과를 공유해요"],
+  ["sprout","AI로 만든 영상일 수 있으니 보지도 퍼뜨리지도 않아요"]]},
+ {q:"반 친구가 내 사진으로 AI 합성 이미지를 만들어 놀렸어요. 친구는 “장난인데 왜 그래?”라고 해요.", o:[
+  ["nav","기분이 나빴다고 분명히 말하고, 삭제와 사과를 요구하며 필요하면 선생님께 알려요"],
+  ["magic","분위기를 깨기 싫어서 웃고 넘어가요"],
+  ["explore","어떤 프로그램으로 만들었는지 확인하고, 이런 합성을 막는 기술도 찾아봐요"],
+  ["sprout","합성 자체가 잘못이므로 제대로 처벌받아야 한다고 말해요"]]},
+ {q:"내가 블로그에 쓴 글이 허락 없이 AI 학습에 쓰였다는 사실을 알게 됐어요.", o:[
+  ["nav","약관과 법을 확인하고, 동의 절차와 보상 기준이 필요하다고 의견을 내요"],
+  ["magic","공개한 글이니 어쩔 수 없다고 생각해요"],
+  ["explore","내 글이 AI 결과에 얼마나 반영됐는지 직접 확인해 보고 싶어요"],
+  ["sprout","허락 없이 쓴 건 잘못이니 삭제와 사과를 요구해요"]]},
+ {q:"자율주행차가 갑자기 나타난 보행자를 피하려다 탑승자가 크게 다칠 수 있어요. AI는 어떻게 만들어져야 할까요?", o:[
+  ["nav","상황별 기준을 사회가 토론으로 정하고, 책임 주체와 설명 의무도 정해야 해요"],
+  ["magic","사람들이 안심하고 살 수 있게 탑승자 보호가 먼저예요"],
+  ["explore","여러 상황을 시뮬레이션해서 피해가 가장 적은 방법을 찾아야 해요"],
+  ["sprout","어떤 경우에도 사람을 해치지 않는다는 원칙이 가장 먼저예요"]]},
+ {q:"외로울 때 AI 챗봇이 내 이야기를 가장 잘 들어 줘요. 점점 챗봇과 대화하는 시간이 늘어나요.", o:[
+  ["nav","위로는 받되, 중요한 고민은 믿을 만한 사람에게도 이야기하도록 시간을 정해요"],
+  ["magic","부담 없이 편하니 계속 챗봇과 이야기해요"],
+  ["explore","AI가 감정을 어떻게 흉내 내는지 궁금해서 대화를 이것저것 시도해 봐요"],
+  ["sprout","AI는 진짜 공감할 수 없으니 사람과의 대화로 풀어야 해요"]]},
+ {q:"내가 AI 그림 대회에서 1등을 했는데, “특정 작가의 그림체와 너무 비슷하다”는 댓글이 달렸어요.", o:[
+  ["nav","참고한 자료와 규정을 확인하고, 문제가 있다면 수상을 포기하는 것도 생각해요"],
+  ["magic","대회 규정에 어긋나지 않았으니 신경 쓰지 않아요"],
+  ["explore","그 작가의 그림과 비교 실험을 해서 얼마나 닮았는지 확인해 봐요"],
+  ["sprout","작가에게 사과하고 수상을 반납해요"]]},
+ {q:"시험 직전, AI 요약본을 잘 쓰는 학생들은 점수가 오르고 쓰지 않는 학생들은 불리해지고 있어요.", o:[
+  ["nav","모두가 쓸 수 있게 사용법을 공유하고, 학교의 기준도 요청해요"],
+  ["magic","잘 활용하는 사람이 이득을 보는 건 당연해요"],
+  ["explore","AI로 효과적으로 공부하는 방법을 찾아 다른 학생들에게도 알려 줘요"],
+  ["sprout","불공정하니 시험 범위의 학습에는 AI 사용을 규제해야 해요"]]},
+ {q:"AI 면접 프로그램이 같은 조건인데도 특정 학교 출신을 낮게 평가한다는 사실을 알게 됐어요. 나는 그 회사에 지원하려던 참이에요.", o:[
+  ["nav","근거를 모아 공개하고, 평가 기준의 설명과 개선을 요구해요"],
+  ["magic","불공평하지만 합격이 우선이니 AI가 좋아할 방식으로 준비해요"],
+  ["explore","어떤 조건에서 점수가 달라지는지 직접 테스트해 보고 싶어요"],
+  ["sprout","불공정한 곳이므로 지원하지 않아요"]]},
+ {q:"새로 나온 무료 AI 앱이 사진첩과 위치 정보 접근 권한을 모두 요구해요.", o:[
+  ["nav","꼭 필요한 권한만 허용하고, 개인정보를 어디에 쓰는지 약관을 확인해요"],
+  ["magic","빨리 쓰고 싶으니 모두 허용해요"],
+  ["explore","일단 허용하고 어떤 기능이 있는지 써 봐요"],
+  ["sprout","불안하니 설치하지 않아요"]]},
+ {q:"AI가 많은 직업을 대체해 일자리를 잃는 사람이 생기고, 일부 기업은 큰돈을 벌 거예요. 어떻게 해야 할까요?", o:[
+  ["nav","세금, 재교육, 사회 안전망 등으로 이익과 부담을 나누는 방법을 사회가 정해야 해요"],
+  ["magic","시대의 흐름이니 개인이 알아서 적응해야 해요"],
+  ["explore","새로 생길 일자리를 미리 찾고 AI 활용 능력을 키우는 게 가장 중요해요"],
+  ["sprout","사람의 일자리를 지키기 위해 AI 도입 속도를 제한해야 해요"]]},
+ {q:"어려운 수학 문제를 AI가 바로 풀어 줘요. 이제 스스로 풀 필요가 있는지 모르겠어요.", o:[
+  ["nav","풀이를 본 뒤 내 말로 설명해 보고, 비슷한 문제는 스스로 풀어요"],
+  ["magic","시험만 잘 보면 되니 AI를 쓰는 게 효율적이에요"],
+  ["explore","AI에게 해설을 여러 방식으로 요청해서 나에게 맞는 설명을 찾아요"],
+  ["sprout","스스로 풀지 않으면 실력이 늘지 않으니 AI 없이 풀어요"]]}
+];
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+QS.forEach(function(q){ q.o = shuffle(q.o); });
+
+
+var TOPICS = ["🧾 정직 · 정확한 정보","🤝 우정 vs 정직","⚖️ 공정 · 규칙","👁️ 안전 vs 사생활","📰 진실 · 책임 있는 공유","🪞 존중 · 초상권","©️ 저작권","🚗 책임 · 생명","🤖 관계 · 정서","🎨 창작 · 저작권","📊 공정 · 접근성","🧮 차별 · 편향","🔐 개인정보","💼 사회적 책임","🧠 사고력 · 학습"];
+var LET = ["A","B","C","D"];
+function el(tag, cls, text, parent){
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+var $ = function(id){return document.getElementById(id)};
+var idx = 0, answers = [], locked = false;
+
+function show(id){
+  ["start","quiz","result"].forEach(function(s){ $(s).hidden = (s !== id); });
+  window.scrollTo(0,0);
+}
+function segs(){
+  var s = $("segs"); s.innerHTML = "";
+  for (var i = 0; i < QS.length; i++){
+    var d = el("i", i < idx ? "done" : (i === idx ? "now" : ""), "", s);
+  }
+  s.setAttribute("aria-valuenow", idx);
+}
+function render(){
+  locked = false;
+  var q = QS[idx];
+  $("count").textContent = (idx+1) + " / " + QS.length;
+  segs();
+  $("backBtn").style.visibility = idx === 0 ? "hidden" : "visible";
+  var stage = $("stage"); stage.innerHTML = "";
+  var card = el("div","sit flip","",stage);
+  var head = el("div","sit-head","",card);
+  el("span","tab","SITUATION " + (idx+1 < 10 ? "0" : "") + (idx+1),head);
+  el("span","topic",TOPICS[idx],head);
+  el("div","q",q.q,card);
+  var ul = $("opts"); ul.innerHTML = "";
+  q.o.forEach(function(pair, n){
+    var li = el("li","","",ul);
+    var b = el("button","opt" + (answers[idx] === pair[0] ? " picked" : ""),"",li);
+    el("span","chip",LET[n],b);
+    el("span","",pair[1],b);
+    b.onclick = function(){
+      if (locked) return;
+      locked = true;
+      answers[idx] = pair[0];
+      Array.prototype.forEach.call(ul.querySelectorAll(".opt"), function(x){ x.classList.remove("picked"); });
+      b.classList.add("picked");
+      setTimeout(next, 420);
+    };
+  });
+}
+function next(){
+  if (idx < QS.length - 1){ idx++; render(); window.scrollTo(0,0); } else { finish(); }
+}
+function finish(){
+  var score = {nav:0,magic:0,explore:0,sprout:0};
+  answers.forEach(function(a){ if (a) score[a]++; });
+  var mx = Math.max(score.nav,score.magic,score.explore,score.sprout);
+  var tied = ORDER.filter(function(k){ return score[k] === mx; });
+  var best = tied[0];
+  for (var i = answers.length - 1; i >= 0; i--){ if (tied.indexOf(answers[i]) > -1){ best = answers[i]; break; } }
+  var t = TYPES[best], c = $("result");
+  c.innerHTML = "";
+  var card = el("div","tcard flip","",c);
+  var top = el("div","t-top","",card); top.style.background = t.color;
+  el("span","","MY AI CARD",top); el("span","","No." + (ORDER.indexOf(best)+1),top);
+  var art = el("div","art",t.emoji,card); art.style.backgroundColor = t.color; art.setAttribute("aria-hidden","true");
+  el("div","t-name",t.name,card);
+  el("div","t-sub","나의 AI 선택 유형",card);
+  var body = el("div","t-body","",card);
+  el("p","",t.desc,body);
+  el("span","h3","선택 능력치",body);
+  ORDER.forEach(function(k){
+    var row = el("div","stat","",body);
+    el("span","",TYPES[k].emoji + " " + TYPES[k].name,row);
+    var tr = el("span","t","",row);
+    var fi = el("i","","",tr); fi.style.width = (score[k] / QS.length * 100) + "%"; fi.style.background = TYPES[k].color;
+    el("span","",String(score[k]),row);
+  });
+  var qb = el("div","box q2","",c);
+  el("span","lab","💬 함께 생각해 볼 질문",qb); el("span","",t.ask,qb);
+  var tb = el("div","box","",c);
+  el("span","lab","💡 성장 퀘스트",tb); el("span","",t.tip,tb);
+  function pair(kind, label, m){
+    var d = el("div","box pair " + kind,"",c);
+    var r = el("div","rowp","",d);
+    var em = el("div","em",TYPES[m.k].emoji,r); em.style.background = TYPES[m.k].color;
+    var b = el("div","","",r);
+    el("span","tg",label,b);
+    el("b","who",TYPES[m.k].name,b);
+    el("span","",m.why,b);
+    el("span","how","함께할 때: " + m.how,b);
+  }
+  pair("good","👍 짝 카드 · 서로 도움이 되는 유형", MATCH[best].good);
+  pair("clash","⚡ 주의 카드 · 부딪히기 쉬운 유형", MATCH[best].clash);
+  el("p","note","어떤 카드가 더 좋거나 나쁜 것은 아니에요. 왜 그렇게 골랐는지 이유를 이야기해 보는 게 중요해요. 📸 내 카드를 캡처해 두세요!",c);
+  var again = el("button","btn again","다시 뽑기",c);
+  again.onclick = function(){ idx = 0; answers = []; show("start"); };
+  show("result");
+}
+$("startBtn").onclick = function(){ idx = 0; answers = []; show("quiz"); render(); };
+$("backBtn").onclick = function(){ if (idx > 0){ idx--; render(); } };
+</script>
+</body>
+</html>
